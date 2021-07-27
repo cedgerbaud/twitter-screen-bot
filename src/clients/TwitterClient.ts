@@ -43,7 +43,7 @@ class TwitterClient {
   public async getUserMentions(userId: string): Promise<Array<any>> {
     const params = {
       max_results: '100',
-      'tweet.fields': 'created_at,in_reply_to_user_id,conversation_id'
+      'tweet.fields': 'created_at,in_reply_to_user_id,conversation_id,entities'
     }
 
     return this.get(`users/${userId}/mentions`, params)

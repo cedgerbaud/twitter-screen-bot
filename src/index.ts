@@ -1,6 +1,7 @@
 import Twitter from './clients/TwitterClient'
 import Redis from './clients/RedisClient'
 import dotenv from 'dotenv'
+import screener from './utils/screener'
 
 dotenv.config()
 
@@ -21,6 +22,9 @@ async function init() {
 
   const user2 = await client.getUserMentions(process.env.TWITTER_BOT_ID ?? '')
   console.log(user2)
+
+  console.log('TEST SCREENER he ho')
+  // await screener()
 }
 
 (async () => await init())()
