@@ -43,15 +43,22 @@ class TwitterClient {
   public async getUserMentions(userId: string): Promise<Array<any>> {
     const params = {
       max_results: '100',
-      'tweet.fields': 'created_at,in_reply_to_user_id,conversation_id,entities'
+      'tweet.fields': 'created_at,in_reply_to_user_id,conversation_id',
+      expansions: 'in_reply_to_user_id'
     }
 
     return this.get(`users/${userId}/mentions`, params)
   }
 
-  public async getTweetUrl(tweetId: string, userId: string): Promise<string> {
+  public async getTweetUrl(tweetId: string): Promise<string> {
+    const userId = (await this.get(`tweets/${tweetId}`, { 'tweet.fields': 'author_id' })).author_id
     const user = await this.getUserById(userId);
     return `https://twitter.com/${user.username}/status/${tweetId}`
+  }
+
+  public async getTweet(id: string): Promise<any> {
+    const tweet = await this.get(`tweets/${id}`, { 'user.fields': 'username', expansions: 'author_id' })
+    return tweet
   }
 }
 
