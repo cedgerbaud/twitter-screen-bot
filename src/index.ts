@@ -1,34 +1,36 @@
-import Twitter from './clients/TwitterClient'
-import Redis from './clients/RedisClient'
 import dotenv from 'dotenv'
+import Application from './Application'
+import Redis from './clients/RedisClient'
+import Twitter from './clients/TwitterClient'
+
+import { image } from './test.base64'
+
 import screener from './services/screener'
-import TweetHandler from './services/tweetsHandler'
 
 dotenv.config()
 
-const twitter = new Twitter({ bearer: process.env.TWITTER_BEARER ?? '' })
-const redis = new Redis();
-const cronConfig = '*/5 * * * * *'
-const handler = new TweetHandler({ twitter, redis, cronConfig })
-
-handler.start()
-
-async function init() {
-  // await redis.asyncSet('lastTweet', 1232645211321)
-  // const lastTweetId = await redis.asyncGet('lastTweet')
-  // console.log(lastTweetId)
-
-  // const user = await client.getUserByUserName("screenThisTweet")
-  // console.log(user)
-
-  // const user2 = await client.getUserMentions(process.env.TWITTER_BOT_ID ?? '')
-  // console.log(user2)
-
-  // console.log('TEST SCREENER he ho')
-  // const tweetTest = await client.getTweet('1381512139119165442')
-  // console.log(tweetTest)
-  // // await screener()
+const twitterCredentials = {
+  bearer: process.env.TWITTER_BEARER ?? '',
+  accessTokenKey: process.env.TWITTER_ACCESS_TOKEN_KEY ?? '',
+  accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET ?? '',
+  consumerKey: process.env.TWITTER_CONSUMER_KEY ?? '',
+  consumerSecret: process.env.TWITTER_CONSUMER_SECRET ?? '',
 }
 
-(async () => await init())()
+const twitter = new Twitter(twitterCredentials)
+const redis = new Redis({ port: +(process.env.REDIS_PORT ?? 6379) });
+const cronConfig = '*/5 * * * * *'
+const botId = process.env.TWITTER_BOT_ID ?? ''
+
+const app = new Application({ twitter, redis, cronConfig, botId })
+
+// app.start()
+// app.handler()
+
+const testTweetUrl = 'https://twitter.com/ValeYellow46/status/1420730636311138311';
+
+(async () => {
+  const uploadedMedia = await twitter.uploadImage(image)
+  console.log('this the end')
+})()
 
